@@ -120,7 +120,11 @@ def git_stuff(component, branch, original_username, my_username):
             backport_branch = f'{fbranch}-auto-{original_username}-{branch}'
             run(f'git switch -c {backport_branch}')
             for patch in patches:
-                run(f'ferrypick {patch} {component_}')
+                try:
+                    run(f'ferrypick {patch} {component_}')
+                except subprocess.CalledProcessError:
+                    print('Sorry, this branch needs manual backport :(')
+                    sys.exit(1)
             run(f'git push --force -u backport-{fbranch} {backport_branch}')
             run(f'git switch {branch}')
             branch_ = backport_branch
