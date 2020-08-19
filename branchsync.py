@@ -6,7 +6,7 @@ import shlex
 import sys
 import subprocess
 import tempfile
-
+from pathlib import Path
 
 # Branhes to backport to, in order from master, without master
 FBRANCHES = ['f33', 'f32', 'f31']
@@ -86,6 +86,11 @@ def parse_args():
     return component, branch, original_username, my_username
 
 
+def source_filenames(sources_path):
+    for line in Path(sources_path).read_text().splitlines():
+        yield line.partition('(')[-1].partition(')')[0]
+
+
 def git_stuff(component, branch, original_username, my_username):
     origin = f'ssh://pkgs.fedoraproject.org/rpms/{component}.git'
     new = f'ssh://pkgs.fedoraproject.org/forks/{original_username}/rpms/{component}.git'
@@ -116,6 +121,10 @@ def git_stuff(component, branch, original_username, my_username):
             run(f'git merge-base --is-ancestor {remote}/{fbranch} {branch_}')
         except subprocess.CalledProcessError:
             patches = run(f'git format-patch origin/master').splitlines()
+            if component != component_:
+                run(f'fedpkg --name {component} sources')
+                sources = ' '.join(source_filenames('sources'))
+                run(f'fedpkg --name {component_} new-sources {sources}')
             run(f'git switch --track {remote}/{fbranch}')
             backport_branch = f'{fbranch}-auto-{original_username}-{branch}'
             run(f'git switch -c {backport_branch}')
