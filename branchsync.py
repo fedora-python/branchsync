@@ -128,7 +128,7 @@ def git_stuff(component, branch, original_username, my_username):
                     f'rpms/{component_}/diff/{fbranch}..{branch_}')
         else:
             link = (f'https://src.fedoraproject.org/fork/{original_username}/'
-                    f'rpms/{component}/diff/{fbranch}..{branch_}')
+                    f'rpms/{component_}/diff/{fbranch}..{branch_}')
         print(f'{GREEN}{link}{END}')
 
 
