@@ -9,7 +9,7 @@ import tempfile
 from pathlib import Path
 
 # Branhes to backport to, in order from master, without master
-FBRANCHES = ['f33', 'f32', 'f31']
+FBRANCHES = ['f34', 'f33', 'f32', 'f31']
 
 # Colors
 BLUE = '\033[94m'
@@ -120,7 +120,7 @@ def git_stuff(component, branch, original_username, my_username):
         try:
             run(f'git merge-base --is-ancestor {remote}/{fbranch} {branch_}')
         except subprocess.CalledProcessError:
-            patches = run(f'git format-patch origin/master').splitlines()
+            patches = run(f'git format-patch origin/main').splitlines()
             if component != component_:
                 run(f'fedpkg --name {component} sources')
                 sources = ' '.join(source_filenames('sources'))
